@@ -1,0 +1,7 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "include": ["electron/**/*.ts"],
+  "compilerOptions": {
+    "composite": true
+  }
+}
