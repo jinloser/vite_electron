@@ -1,10 +1,10 @@
 <template>
   <a-layout id="app-layout-sider">
     <a-layout-sider
-      v-model="collapsed"
+      v-model="states.collapsed"
       theme="light"
       class="layout-sider"
-      width="100"
+      :width="100"
     >
       <div class="logo">
         <img class="pic-logo" src="~@/assets/logo.png" />
@@ -12,11 +12,11 @@
       <a-menu
         class="menu-item"
         theme="light"
-        mode="inline"
-        :selectedKeys="[current]"
+        mode="vertical"
+        :selectedKeys="[states.current]"
         @menu-item-click="menuHandle"
       >
-        <a-menu-item v-for="(menuInfo, index) in menu" :key="index">
+        <a-menu-item v-for="(menuInfo, index) in states.menu" :key="index">
           <icon-font :type="menuInfo.icon" />
           {{ menuInfo.title }}
         </a-menu-item>
@@ -29,61 +29,52 @@
     </a-layout>
   </a-layout>
 </template>
-<script>
-export default {
-  name: 'AppSider',
-  data() {
-    return {
-      collapsed: true,
-      current: 'menu_1',
-      menu: {
-        menu_1: {
-          icon: 'icon-kuangjia',
-          title: '框架',
-          pageName: 'Framework',
-          params: {
-            // test: 'hello'
-          },
-        },
-        menu_2: {
-          icon: 'icon-xitongguanli',
-          title: '系统',
-          pageName: 'Os',
-          params: {},
-        },
-        menu_3: {
-          icon: 'icon-woshiyingjianchangjia',
-          title: '硬件',
-          pageName: 'Hardware',
-          params: {},
-        },
-        menu_4: {
-          icon: 'icon-UI-xuanzhong',
-          title: '前端',
-          pageName: 'vueui',
-          params: {},
-        },
-      },
-    };
-  },
-  created() {},
-  mounted() {
-    this.menuHandle();
-  },
-  methods: {
-    menuHandle(key) {
-      console.log('sider menu key:', key);
-      this.current = key ? key : this.current;
+<script lang="ts" setup>
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-      const linkInfo = this.menu[this.current];
-      this.$router.push({ name: linkInfo.pageName, params: linkInfo.params });
+const states = reactive({
+  collapsed: true,
+  current: 'menu_1',
+  menu: {
+    menu_1: {
+      icon: 'icon-kuangjia',
+      title: '框架',
+      pageName: 'Framework',
+      params: {
+        // test: 'hello'
+      },
     },
-    changeMenu(e) {
-      console.log('sider menu e:', e);
-      //this.current = e.key;
+    menu_2: {
+      icon: 'icon-xitongguanli',
+      title: '系统',
+      pageName: 'Os',
+      params: {},
+    },
+    menu_3: {
+      icon: 'icon-woshiyingjianchangjia',
+      title: '硬件',
+      pageName: 'Hardware',
+      params: {},
+    },
+    menu_4: {
+      icon: 'icon-UI-xuanzhong',
+      title: '前端',
+      pageName: 'vueui',
+      params: {},
     },
   },
+});
+
+const menuHandle = (key?: string) => {
+  console.log('sider menu key:', key);
+  states.current = key ? key : states.current;
+  const linkInfo = states.menu[states.current];
+  router.push({ name: linkInfo.pageName, params: linkInfo.params });
 };
+
+menuHandle();
 </script>
 <style lang="less" scoped>
 // 嵌套
