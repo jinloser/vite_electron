@@ -1,24 +1,21 @@
 <template>
   <div id="vueui-login-window">
     <div class="block-1">
-      <a v-if="!loading" >
+      <a v-if="!states.loading">
         <a-form
           ref="loginForm"
-          :model="userInfo"
+          :model="states.userInfo"
           class="login-form"
           layout="vertical"
           @submit="handleSubmit"
         >
-            <a-form-item
+          <a-form-item
             field="username"
             :rules="[{ required: true, message: '请输入账号' }]"
             :validate-trigger="['change', 'blur']"
             hide-label
           >
-            <a-input
-              v-model="userInfo.username"
-              placeholder="账号"
-            >
+            <a-input v-model="states.userInfo.username" placeholder="账号">
               <template #prefix>
                 <icon-font type="icon-zhanghao" />
               </template>
@@ -31,7 +28,7 @@
             hide-label
           >
             <a-input-password
-              v-model="userInfo.password"
+              v-model="states.userInfo.password"
               placeholder="密码"
               allow-clear
             >
@@ -40,42 +37,45 @@
               </template>
             </a-input-password>
           </a-form-item>
-          <a-button type="primary" html-type="submit" >
-            登录
-          </a-button>
+          <a-button type="primary" html-type="submit"> 登录 </a-button>
         </a-form>
       </a>
-      <span v-else>{{ loginText }}</span>
-    </div>  
+      <span v-else>{{ states.loginText }}</span>
+    </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
-import { readConfig } from "@/utils/getConfig";
-export default {
-  data() {
-    return {
-      loading: false, 
-      loginText: '正在登陆......',
-      userInfo:{
-        username: "",
-         password:"",
-      }
-    };
+import { readConfig } from '@/utils/getConfig';
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const states = reactive({
+  loading: false,
+  loginText: '正在登陆......',
+  userInfo: {
+    username: '',
+    password: '',
   },
-  methods: {
-    handleSubmit({values, errors}) {
-     if(!errors){
-      this.loading = true;
-      setTimeout(async() => {
-        this.$router.push({ name: 'Framework', params: {}});
-        var { MainWinWidth,MainWinHeight ,MainwindowTitle}=await readConfig();
-        ipc.invoke(ipcApiRoute.restoreWindow, {width: MainWinWidth, height: MainWinHeight,windowTitle:MainwindowTitle}).then(r => {      
+});
+
+const handleSubmit = ({ errors }) => {
+  if (!errors) {
+    states.loading = true;
+    setTimeout(async () => {
+      router.push({ name: 'Framework', params: {} });
+      var { MainWinWidth, MainWinHeight, MainwindowTitle } = await readConfig();
+      ipc
+        .invoke(ipcApiRoute.restoreWindow, {
+          width: MainWinWidth,
+          height: MainWinHeight,
+          windowTitle: MainwindowTitle,
         })
-      }, 1000);
-     }
-    }
+        .then((r) => {
+          console.log(r);
+        });
+    }, 1000);
   }
 };
 </script>
@@ -93,4 +93,3 @@ export default {
   }
 }
 </style>
-  

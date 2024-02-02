@@ -1,10 +1,8 @@
 <template>
   <div id="app-base-screen">
     <div class="one-block-1">
-      <span>
-        1. 屏幕信息
-      </span>
-    </div>  
+      <span> 1. 屏幕信息 </span>
+    </div>
     <div class="one-block-2">
       <a-space>
         <a-button @click="getScreen(0)">获取当前鼠标位置</a-button>
@@ -13,36 +11,35 @@
       </a-space>
     </div>
     <div class="one-block-1">
-      <span>
-        结果：
-      </span>
-    </div>  
+      <span> 结果： </span>
+    </div>
     <div class="one-block-2">
       <a-descriptions title="">
-        <a-descriptions-item v-for="(info, index) in data" :key="index" :label="info.title" >
+        <a-descriptions-item
+          v-for="(info, index) in states.data"
+          :key="index"
+          :label="info.title"
+        >
           {{ info.desc }}
         </a-descriptions-item>
       </a-descriptions>
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
+import { CommonArrayType } from '@/definations';
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
+import { reactive } from 'vue';
 
-export default {
-  data() {
-    return {
-      data: [],
-    };
-  },
-  methods: {
-    getScreen (index) {
-      ipc.invoke(ipcApiRoute.getScreen, index).then(result => {
-        this.data = result;
-      })
-    },
-  }
+const states = reactive({
+  data: [] as CommonArrayType,
+});
+
+const getScreen = (index: number) => {
+  ipc.invoke(ipcApiRoute.getScreen, index).then((result) => {
+    states.data = result;
+  });
 };
 </script>
 <style lang="less" scoped>

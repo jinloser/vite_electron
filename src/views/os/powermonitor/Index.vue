@@ -1,13 +1,11 @@
 <template>
   <div id="app-base-powermonitor">
     <div class="one-block-1">
-      <span>
-        1. 监控电源状态
-      </span>
-    </div>  
+      <span> 1. 监控电源状态 </span>
+    </div>
     <div class="one-block-2">
       <a-space>
-        <p>* 当前状态：{{ currentStatus }}</p>
+        <p>* 当前状态：{{ states.currentStatus }}</p>
       </a-space>
       <p>* 拔掉电源，使用电池供电</p>
       <p>* 接入电源</p>
@@ -16,34 +14,28 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
+import { Message } from '@arco-design/web-vue';
+import { reactive } from 'vue';
 
-export default {
-  data() {
-    return {
-      currentStatus: '无',
-    };
-  },
-  mounted () {
-    this.init();
-  },
-  methods: {
-    init () {
-      ipc.removeAllListeners(ipcApiRoute.initPowerMonitor);
-      ipc.on(ipcApiRoute.initPowerMonitor, (event, result) => {
-        console.log("电源：",result)
-        if (Object.prototype.toString.call(result) == '[object Object]') {
-          console.log("电源2：",result)
-          this.currentStatus = result.msg;
-          this.$message.info(result.msg);
-        }
-      })
-      ipc.send(ipcApiRoute.initPowerMonitor, '');
+const states = reactive({
+  currentStatus: '无',
+});
+const init = () => {
+  ipc.removeAllListeners(ipcApiRoute.initPowerMonitor);
+  ipc.on(ipcApiRoute.initPowerMonitor, (_, result) => {
+    console.log('电源：', result);
+    if (Object.prototype.toString.call(result) == '[object Object]') {
+      console.log('电源2：', result);
+      states.currentStatus = result.msg;
+      Message.info(result.msg);
     }
-  }
+  });
+  ipc.send(ipcApiRoute.initPowerMonitor, '');
 };
+init();
 </script>
 <style lang="less" scoped>
 #app-base-powermonitor {

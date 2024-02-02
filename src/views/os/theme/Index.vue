@@ -1,80 +1,65 @@
 <template>
   <div id="app-base-screen">
     <div class="one-block-1">
-      <span>
-        1. 系统主题模式
-      </span>
+      <span> 1. 系统主题模式 </span>
     </div>
     <div class="one-block-2">
       <a-space>
         <a-button @click="getTheme()">获取模式</a-button>
       </a-space>
-      <span>
-        结果：{{ currentThemeMode }}
-      </span>
+      <span> 结果：{{ states.currentThemeMode }} </span>
     </div>
-    <div class="one-block-1">
-      2. 设置主题模式（请自行实现前端UI效果）
-    </div>  
+    <div class="one-block-1">2. 设置主题模式（请自行实现前端UI效果）</div>
     <div class="one-block-2">
-      <a-radio-group v-model="currentThemeMode" @change="setTheme">
-        <a-radio :value="themeList[0]">
-          {{ themeList[0] }}
+      <a-radio-group v-model="states.currentThemeMode" @change="setTheme">
+        <a-radio :value="states.themeList[0]">
+          {{ states.themeList[0] }}
         </a-radio>
-        <a-radio :value="themeList[1]">
-          {{ themeList[1] }}
+        <a-radio :value="states.themeList[1]">
+          {{ states.themeList[1] }}
         </a-radio>
-        <a-radio :value="themeList[2]">
-          {{ themeList[2] }}
+        <a-radio :value="states.themeList[2]">
+          {{ states.themeList[2] }}
         </a-radio>
       </a-radio-group>
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
+import { reactive } from 'vue';
 
-export default {
-  data() {
-    return {
-      currentThemeMode: '',
-      themeList: [
-        'system',
-        'light',
-        'dark'
-      ]
-    };
-  },
-  mounted () {
-    this.getTheme()
-  },
+const states = reactive({
+  currentThemeMode: '',
+  themeList: ['system', 'light', 'dark'],
+});
 
-  methods: {
-    setTheme (value) {
-      this.currentThemeMode =value;
-      console.log('setTheme currentThemeMode:', this.currentThemeMode)
+const setTheme = (value) => {
+  states.currentThemeMode = value;
+  console.log('setTheme currentThemeMode:', states.currentThemeMode);
 
-      ipc.invoke(ipcApiRoute.setTheme, this.currentThemeMode).then(result => {
-        console.log('result:', result)
-        if(result=="dark"){
-            // 设置为暗黑主题
-            document.body.setAttribute('arco-theme', 'dark')
-        }else{
-            // 恢复亮色主题
-            document.body.removeAttribute('arco-theme');
-        }
-        this.currentThemeMode = result;
-      })      
-    },
-    getTheme () {
-      ipc.invoke(ipcApiRoute.getTheme).then(result => {
-        console.log('获取主题:', result)
-        this.currentThemeMode = result;
-      })  
-    },
-  }
+  ipc.invoke(ipcApiRoute.setTheme, states.currentThemeMode).then((result) => {
+    console.log('result:', result);
+    if (result == 'dark') {
+      // 设置为暗黑主题
+      document.body.setAttribute('arco-theme', 'dark');
+    } else {
+      // 恢复亮色主题
+      document.body.removeAttribute('arco-theme');
+    }
+    states.currentThemeMode = result;
+  });
 };
+
+const getTheme = () => {
+  ipc.invoke(ipcApiRoute.getTheme).then((result) => {
+    console.log('获取主题:', result);
+    states.currentThemeMode = result;
+  });
+};
+
+getTheme();
 </script>
 <style lang="less" scoped>
 #app-base-screen {

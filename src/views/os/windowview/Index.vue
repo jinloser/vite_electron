@@ -1,10 +1,8 @@
 <template>
   <div id="app-base-window-view">
     <div class="one-block-1">
-      <span>
-        1. 嵌入web内容
-      </span>
-    </div>  
+      <span> 1. 嵌入web内容 </span>
+    </div>
     <div class="one-block-2">
       <a-space>
         <a-button @click="loadViewContent(0)">加载百度页面</a-button>
@@ -12,10 +10,8 @@
       </a-space>
     </div>
     <div class="one-block-1">
-      <span>
-        2. 嵌入html内容
-      </span>
-    </div>  
+      <span> 2. 嵌入html内容 </span>
+    </div>
     <div class="one-block-2">
       <a-space>
         <a-button @click="loadViewContent(1)">加载html页面</a-button>
@@ -24,38 +20,37 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
-import { toRaw } from 'vue';
+import { reactive, toRaw } from 'vue';
 
-export default {
-  data() {
-    return {
-      views: [
-        {
-          type: 'web',
-          content: 'https://www.baidu.com/'
-        },
-        {
-          type: 'html',
-          content: '/public/html/view_example.html'
-        },        
-      ],
-    };
-  },
-  methods: {
-    loadViewContent (index) {
-      ipc.invoke(ipcApiRoute.loadViewContent, toRaw(this.views[index])).then(r => {
-        console.log(r);
-      })
+const states = reactive({
+  views: [
+    {
+      type: 'web',
+      content: 'https://www.baidu.com/',
     },
-    removeViewContent (index) {
-      ipc.invoke(ipcApiRoute.removeViewContent, toRaw(this.views[index])).then(r => {
-        console.log(r);
-      })
+    {
+      type: 'html',
+      content: '/public/html/view_example.html',
     },
-  }
+  ],
+});
+
+const loadViewContent = (index: number) => {
+  ipc
+    .invoke(ipcApiRoute.loadViewContent, toRaw(states.views[index]))
+    .then((r) => {
+      console.log(r);
+    });
+};
+const removeViewContent = (index: number) => {
+  ipc
+    .invoke(ipcApiRoute.removeViewContent, toRaw(states.views[index]))
+    .then((r) => {
+      console.log(r);
+    });
 };
 </script>
 <style lang="less" scoped>

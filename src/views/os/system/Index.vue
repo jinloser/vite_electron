@@ -2,51 +2,51 @@
   <div id="app-base-system-launch">
     <div class="one-block-2">
       <a-list class="set-auto" itemLayout="horizontal">
-        <a-list-item style="text-align: left;">
+        <a-list-item style="text-align: left">
           <a-list-item-meta>
             <template v-slot:title>
               <a>启动</a>
             </template>
             <template v-slot:description>
-              <span>
-                开机自动启动
-              </span>
+              <span> 开机自动启动 </span>
             </template>
           </a-list-item-meta>
           <template v-slot:actions>
-            <a-switch v-model="autoLaunchChecked" checkedChildren="开" unCheckedChildren="关" @change="autoLaunchChange()" />
+            <a-switch
+              v-model="states.autoLaunchChecked"
+              checkedChildren="开"
+              unCheckedChildren="关"
+              @change="autoLaunchChange()"
+            />
           </template>
         </a-list-item>
       </a-list>
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
+import { reactive } from 'vue';
 
-export default {
-  data () {
-    return {
-      autoLaunchChecked: false
-    }
-  },
-  mounted () {
-    this.init();
-  },
-  methods: {
-    init () {
-      // todo .....
-      ipc.invoke(ipcApiRoute.autoLaunch, 'check').then(result => {
-        console.log('[ipcRenderer] [autoLaunch] result:', result)
-        this.autoLaunchChecked = result.status;
-      })      
-    },
-    autoLaunchChange (checkStatus) {
-      console.log('[ipcRenderer] [autoLaunch] self.autoLaunchChecked:', this.autoLaunchChecked)
-    },
-  }
-}
+const states = reactive({
+  autoLaunchChecked: false,
+});
+
+const init = () => {
+  // todo .....
+  ipc.invoke(ipcApiRoute.autoLaunch, 'check').then((result) => {
+    console.log('[ipcRenderer] [autoLaunch] result:', result);
+    states.autoLaunchChecked = result.status;
+  });
+};
+init();
+const autoLaunchChange = () => {
+  console.log(
+    '[ipcRenderer] [autoLaunch] self.autoLaunchChecked:',
+    states.autoLaunchChecked
+  );
+};
 </script>
 <style lang="less" scoped>
 #app-base-system-launch {
@@ -65,5 +65,5 @@ export default {
       border-bottom: 1px solid var(--color-neutral-3);
     }
   }
-}  
-</style>  
+}
+</style>

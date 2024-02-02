@@ -1,10 +1,8 @@
 <template>
   <div id="vueui-login-index">
     <div class="one-block-1">
-      <span>
-          1. 登录
-      </span>
-    </div>  
+      <span> 1. 登录 </span>
+    </div>
     <div class="one-block-2">
       <a-space>
         <a-button @click="loginWindow()">切换为登录窗口</a-button>
@@ -12,23 +10,23 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-export default {
-  data() {
-    return {
-    };
-  },
-  methods: {
-    loginWindow () {
-      this.$router.push({ name: 'SpecialLoginWindow', params: {}});
-      ipc.invoke(ipcApiRoute.loginWindow, {width: 400, height: 300,windowTitle:"登录"}).then(r => {      
-        console.log("打开登录接口返回：",r)
-      })
-    },
-  }
+const loginWindow = () => {
+  router.push({ name: 'SpecialLoginWindow', params: {} });
+  ipc
+    .invoke(ipcApiRoute.loginWindow, {
+      width: 400,
+      height: 300,
+      windowTitle: '登录',
+    })
+    .then((r) => {
+      console.log('打开登录接口返回：', r);
+    });
 };
 </script>
 <style lang="less" scoped>
@@ -37,12 +35,11 @@ export default {
   text-align: left;
   width: 100%;
   .one-block-1 {
-      font-size: 16px;
-      padding-top: 10px;
+    font-size: 16px;
+    padding-top: 10px;
   }
   .one-block-2 {
-      padding-top: 10px;
+    padding-top: 10px;
   }
 }
 </style>
-  
