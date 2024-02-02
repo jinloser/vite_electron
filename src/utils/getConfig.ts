@@ -4,7 +4,7 @@ const fs = require('fs');
  * 读取配置文件
  */
 export function readConfig() {
-  const getConfigPath = path.join(import.meta.env.EgVuePath, 'config.conf');
+  const getConfigPath = path.join((window as any).EgVuePath, 'config.conf');
   const data = fs.readFileSync(path.resolve(getConfigPath), {
     encoding: 'utf8',
     flag: 'r',

@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
-import { reactive, toRaw } from 'vue';
+import { onMounted, reactive, toRaw } from 'vue';
 import Player from 'xgplayer';
 //西瓜视频文档https://v2.h5player.bytedance.com/gettingStarted/#%E5%AE%89%E8%A3%85
 import { readConfig } from '@/utils/getConfig';
@@ -60,7 +60,9 @@ const states = reactive({
 const init = () => {
   states.p = new Player(toRaw(states.op));
 };
-init();
+onMounted(() => {
+  init();
+});
 //选择本地文件
 const selectFile = async () => {
   var { baseURL } = await readConfig();
