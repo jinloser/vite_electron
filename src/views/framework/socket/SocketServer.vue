@@ -1,63 +1,59 @@
 <template>
   <div id="app-base-httpserver">
     <div class="one-block-1">
-      <span>
-        1. 使用socket与主进程通信
-      </span>
+      <span> 1. 使用socket与主进程通信 </span>
     </div>
     <div class="one-block-2">
       <a-space>
-        <p>* 状态：{{ currentStatus }}</p>
+        <p>* 状态：{{ states.currentStatus }}</p>
       </a-space>
-      <p>* 地址：{{ servicAddress }}</p>
+      <p>* 地址：{{ states.servicAddress }}</p>
     </div>
     <div class="one-block-1">
-      <span>
-        2. 发送请求
-      </span>
-    </div>    
+      <span> 2. 发送请求 </span>
+    </div>
     <div class="one-block-2">
       <a-space>
-        <a-button @click="sendRequest('downloads')"> 打开【我的下载】 </a-button>
+        <a-button @click="sendRequest('downloads')">
+          打开【我的下载】
+        </a-button>
       </a-space>
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
+import { CommonObjectType } from '@/definations';
 import { ipcApiRoute } from '@/utils/ipcMainApi';
+import { Message } from '@arco-design/web-vue';
 import { io } from 'socket.io-client';
+import { reactive } from 'vue';
 
-export default {
-  data() {
-    return {
-      currentStatus: '关闭',
-      servicAddress: 'ws://localhost:7070'
-    };
-  },
-  mounted () {
-    this.init();
-  },
-  methods: {
-    init () {
-      this.socket = io(this.servicAddress);
-      this.socket.on('connect', () => {
-        console.log('connect!!!!!!!!');
-        this.currentStatus = '开启';
-      });
-    },
-    sendRequest (id) {
-      if (this.currentStatus == '关闭') {
-        this.$message.error('socketio服务未开启');
-        return;
-      }
+let socket: CommonObjectType;
 
-      const method = ipcApiRoute.doSocketRequest; 
-      this.socket.emit('c1', { cmd: method, params: {id: id} }, (response) => {
-        // response为返回值
-        console.log('response:', response)
-      });
-    },  
+const states = reactive({
+  currentStatus: '关闭',
+  servicAddress: 'ws://localhost:7070',
+});
+
+const init = () => {
+  socket = io(states.servicAddress);
+  socket.on('connect', () => {
+    console.log('connect!!!!!!!!');
+    states.currentStatus = '开启';
+  });
+};
+init();
+const sendRequest = (id: string) => {
+  if (states.currentStatus == '关闭') {
+    Message.error('socketio服务未开启');
+    return;
   }
+
+  const method = ipcApiRoute.doSocketRequest;
+  socket.emit('c1', { cmd: method, params: { id: id } }, (response) => {
+    // response为返回值
+    console.log('response:', response);
+  });
 };
 </script>
 <style lang="less" scoped>

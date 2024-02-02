@@ -1,10 +1,8 @@
 <template>
   <div id="app-base-notification">
     <div class="one-block-1">
-      <span>
-        1. 弹出桌面通知
-      </span>
-    </div>  
+      <span> 1. 弹出桌面通知 </span>
+    </div>
     <div class="one-block-2">
       <a-space>
         <a-button @click="sendNotification(0)">默认</a-button>
@@ -15,63 +13,57 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
-import { toRaw } from 'vue';
+import { Message } from '@arco-design/web-vue';
+import { reactive, toRaw } from 'vue';
 
-export default {
-  data() {
-    return {
-      views: [
-        {
-          type: 'main',
-          title: '通知标题',
-          subtitle: '副标题', // macOS系统专有属性
-          body: '这是通知内容-默认',
-          silent: true,
-        },
-        {
-          type: 'main',
-          title: '提示音',
-          subtitle: '副标题-提示音',
-          body: '这是通知内容-提示音',
-          silent: false,
-        },
-        {
-          type: 'main',
-          title: '点击通知事件',
-          subtitle: '副标题-点击通知事件',
-          body: '这是通知内容-点击通知事件',
-          clickEvent: true
-        },
-        {
-          type: 'main',
-          title: '关闭通知事件',
-          subtitle: '副标题-关闭通知事件',
-          body: '这是通知内容-点击通知事件',
-          closeEvent: true
-        },             
-      ],
-    };
-  },
-  mounted () {
-    this.init();
-  },
-  methods: {
-    init () {
-      // 避免重复监听，或者将 on 功能写到一个统一的地方，只加载一次
-      ipc.removeAllListeners(ipcApiRoute.sendNotification);
-      ipc.on(ipcApiRoute.sendNotification, (event, result) => {
-        if (Object.prototype.toString.call(result) == '[object Object]') {
-          this.$message.info(result.msg);
-        }  
-      })
+const states = reactive({
+  views: [
+    {
+      type: 'main',
+      title: '通知标题',
+      subtitle: '副标题', // macOS系统专有属性
+      body: '这是通知内容-默认',
+      silent: true,
     },
-    sendNotification (index) {
-      ipc.send(ipcApiRoute.sendNotification, toRaw(this.views[index]));
+    {
+      type: 'main',
+      title: '提示音',
+      subtitle: '副标题-提示音',
+      body: '这是通知内容-提示音',
+      silent: false,
     },
-  }
+    {
+      type: 'main',
+      title: '点击通知事件',
+      subtitle: '副标题-点击通知事件',
+      body: '这是通知内容-点击通知事件',
+      clickEvent: true,
+    },
+    {
+      type: 'main',
+      title: '关闭通知事件',
+      subtitle: '副标题-关闭通知事件',
+      body: '这是通知内容-点击通知事件',
+      closeEvent: true,
+    },
+  ],
+});
+
+const init = () => {
+  // 避免重复监听，或者将 on 功能写到一个统一的地方，只加载一次
+  ipc.removeAllListeners(ipcApiRoute.sendNotification);
+  ipc.on(ipcApiRoute.sendNotification, (_, result) => {
+    if (Object.prototype.toString.call(result) == '[object Object]') {
+      Message.info(result.msg);
+    }
+  });
+};
+init();
+const sendNotification = (index: number) => {
+  ipc.send(ipcApiRoute.sendNotification, toRaw(states.views[index]));
 };
 </script>
 <style lang="less" scoped>

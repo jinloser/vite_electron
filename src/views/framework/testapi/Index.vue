@@ -1,10 +1,8 @@
 <template>
   <div id="app-base-test-api">
     <div class="one-block-1">
-      <span>
-        1. 测试一些操作系统api
-      </span>
-    </div>  
+      <span> 1. 测试一些操作系统api </span>
+    </div>
     <div class="one-block-2">
       <a-space>
         <a-button @click="exec(1)"> 点击 </a-button>
@@ -13,30 +11,21 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
 
-export default {
-  data() {
-    return {
-      type: 1,
-    };
-  },
-  methods: {
-    exec (id) {
-      console.log('process:', process)
-      const params = {
-        id: id
-      }
-      ipc.invoke(ipcApiRoute.test, params).then(res => {
-        console.log('res:', res)
-      }) 
-    },
-    exec2 (id) {
-      //
-    },    
-  }
+const exec = (id: number) => {
+  console.log('process:', process);
+  const params = {
+    id: id,
+  };
+  ipc.invoke(ipcApiRoute.test, params).then((res) => {
+    console.log('res:', res);
+  });
+};
+const exec2 = (id: number) => {
+  console.log(id);
 };
 </script>
 <style lang="less" scoped>

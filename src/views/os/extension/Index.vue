@@ -10,50 +10,41 @@
       <a-upload-dragger
         name="file"
         :multiple="true"
-        :action="action_url"
+        :action="states.action_url"
         @change="handleChange"
       >
         <p class="ant-upload-drag-icon">
           <a-icon type="inbox" />
         </p>
-        <p class="ant-upload-text">
-          上传
-        </p>
-        <p class="ant-upload-hint">
-        </p>
+        <p class="ant-upload-text">上传</p>
+        <p class="ant-upload-hint"></p>
       </a-upload-dragger>
     </div>
-    <div class="one-block-1">
-      2. chrome扩展商店（crx下载）
-    </div>  
+    <div class="one-block-1">2. chrome扩展商店（crx下载）</div>
     <div class="one-block-2">
-      <a-space>
-        极简插件：https://chrome.zzzmh.cn/
-      </a-space>
+      <a-space> 极简插件：https://chrome.zzzmh.cn/ </a-space>
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
+import { CommonObjectType } from '@/definations';
+import { Message } from '@arco-design/web-vue';
+import { reactive } from 'vue';
 
-export default {
-  data() {
-    return {
-      action_url: 'localhost:xxxx/api/example/uploadExtension',
-    };
-  },
-  methods: {
-		handleChange(info) {
-      const status = info.file.status;
-      if (status !== 'uploading') {
-        console.log(info.file);
-      }
-      if (status === 'done') {
-        const uploadRes = info.file.response;
-        console.log('uploadRes:', uploadRes)
-      } else if (status === 'error') {
-        this.$message.error(`${info.file.name} file upload failed.`);
-      }
-    },
+const states = reactive({
+  action_url: 'localhost:xxxx/api/example/uploadExtension',
+});
+
+const handleChange = (info: CommonObjectType) => {
+  const status = info.file.status;
+  if (status !== 'uploading') {
+    console.log(info.file);
+  }
+  if (status === 'done') {
+    const uploadRes = info.file.response;
+    console.log('uploadRes:', uploadRes);
+  } else if (status === 'error') {
+    Message.error(`${info.file.name} file upload failed.`);
   }
 };
 </script>

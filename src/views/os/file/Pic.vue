@@ -1,39 +1,31 @@
 <template>
   <div id="os-file-pic">
     <div class="one-block-1">
-      <span>
-          1. 加载本机图片
-      </span>
-    </div>  
+      <span> 1. 加载本机图片 </span>
+    </div>
     <div class="one-block-2">
       <a-space>
-          <a-button @click="selectPic(0)">选择图片</a-button>
+        <a-button @click="selectPic()">选择图片</a-button>
       </a-space>
       <p></p>
-      <a-image
-        :width="500"
-        :src=picPath
-      />
+      <a-image :width="500" :src="states.picPath" />
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
+import { reactive } from 'vue';
 
-export default {
-  data() {
-    return {
-      picPath: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
-    };
-  },
-  methods: {
-    selectPic () {
-      ipc.invoke(ipcApiRoute.selectPic, {}).then(r => {      
-        this.picPath = r;
-      })
-    },
-  }
+const states = reactive({
+  picPath:
+    'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+});
+
+const selectPic = () => {
+  ipc.invoke(ipcApiRoute.selectPic, {}).then((r) => {
+    states.picPath = r;
+  });
 };
 </script>
 <style lang="less" scoped>
@@ -42,12 +34,11 @@ export default {
   text-align: left;
   width: 100%;
   .one-block-1 {
-      font-size: 16px;
-      padding-top: 10px;
+    font-size: 16px;
+    padding-top: 10px;
   }
   .one-block-2 {
-      padding-top: 10px;
+    padding-top: 10px;
   }
 }
 </style>
-  

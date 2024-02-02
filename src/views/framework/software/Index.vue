@@ -1,52 +1,45 @@
 <template>
   <div id="app-base-software-open">
     <div class="one-block-1">
-      <span>
-        1. 调用其它软件（exe、bash等可执行程序）
-      </span>
-      <p/>
+      <span> 1. 调用其它软件（exe、bash等可执行程序） </span>
+      <p />
       <span class="sub-content">
         注：请先将【powershell.exe】复制到【public/extraResources】目录中
       </span>
-    </div>  
+    </div>
     <div class="one-block-2">
-      <a-list bordered :data="data">
+      <a-list bordered :data="states.data">
         <template #item="{ item }">
           <a-list-item @click="openSoft(item.id)">
             {{ item.content }}
-            <a-button type="primary">
-              执行
-            </a-button>
+            <a-button type="primary"> 执行 </a-button>
           </a-list-item>
         </template>
       </a-list>
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { ipcApiRoute } from '@/utils/ipcMainApi';
 import { ipc } from '@/utils/ipcRenderer';
+import { Message } from '@arco-design/web-vue';
+import { reactive } from 'vue';
 
-export default {
-  data() {
-    return {
-      data: [
-        {
-          content: 'powershell.exe',
-          id: 'powershell.exe'
-        }
-      ],
-    };
-  },
-  methods: {
-    openSoft(id) { 
-      ipc.invoke(ipcApiRoute.openSoftware, id).then(result => {
-        if (!result) {
-          this.$message.error('程序不存在');
-        }
-      })       
+const states = reactive({
+  data: [
+    {
+      content: 'powershell.exe',
+      id: 'powershell.exe',
     },
-  }
+  ],
+});
+
+const openSoft = (id: string) => {
+  ipc.invoke(ipcApiRoute.openSoftware, id).then((result) => {
+    if (!result) {
+      Message.error('程序不存在');
+    }
+  });
 };
 </script>
 <style lang="less" scoped>
