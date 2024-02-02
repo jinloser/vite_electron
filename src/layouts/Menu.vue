@@ -43,7 +43,6 @@ const props = defineProps({
 
 const states = reactive({
   menu: {} as CommonObjectType,
-  //selectedKeys: ['menu_100'],
   current: 'menu_100',
   keys: [],
 });
@@ -58,7 +57,6 @@ watch(
 );
 
 const menuHandle = () => {
-  // 该组件优先被加载了，所以没拿到参数
   console.log('params:', route);
   console.log('menu ------ id:', props.id);
   states.menu = subMenu[props.id];
